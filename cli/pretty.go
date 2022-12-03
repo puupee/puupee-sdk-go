@@ -1,11 +1,12 @@
 package cli
 
 import (
-	"encoding/json"
 	"fmt"
+
+	"github.com/bndr/gotabulate"
 )
 
 func PrettyPrint(v interface{}) {
-	bts, _ := json.MarshalIndent(v, "", "  ")
-	fmt.Println(string(bts))
+	t := gotabulate.Create(v)
+	fmt.Println(t.Render("grid"))
 }
