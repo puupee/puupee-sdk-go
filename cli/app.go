@@ -19,7 +19,9 @@ func NewAppOp(api *puupee.APIClient) *AppOp {
 }
 
 func (op *AppOp) Create(dto puupee.CreateOrUpdateAppDto) error {
-	resp, _, err := op.api.AppApi.ApiAppAppPost(context.Background()).Body(dto).Execute()
+	resp, _, err := op.api.AppApi.ApiAppAppPost(context.Background()).
+		Body(dto).
+		Execute()
 	if err != nil {
 		return err
 	}
@@ -27,18 +29,20 @@ func (op *AppOp) Create(dto puupee.CreateOrUpdateAppDto) error {
 	return nil
 }
 
-func (op *AppOp) List() error {
-	dto, _, err := op.api.AppApi.ApiAppAppGet(context.Background()).MaxResultCount(100).Execute()
+func (op *AppOp) List() (*puupee.AppDtoPagedResultDto, error) {
+	dto, _, err := op.api.AppApi.ApiAppAppGet(context.Background()).
+		MaxResultCount(100).
+		Execute()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	bts, _ := json.MarshalIndent(dto, "", "  ")
-	fmt.Println(string(bts))
-	return nil
+	return dto, nil
 }
 
 func (op *AppOp) Get(appName string) error {
-	appDto, _, err := op.api.AppApi.ApiAppAppByNameGet(context.Background()).Name(appName).Execute()
+	appDto, _, err := op.api.AppApi.ApiAppAppByNameGet(context.Background()).
+		Name(appName).
+		Execute()
 	if err != nil {
 		return err
 	}

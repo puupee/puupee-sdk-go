@@ -4,6 +4,8 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/puupee/puupee-sdk-go/cli"
 	"github.com/spf13/cobra"
 )
@@ -11,11 +13,17 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "A brief description of your command",
+	Short: "应用列表",
 	Run: func(cmd *cobra.Command, args []string) {
 		c := cli.NewpuupeeCli()
-		err := c.AppOp.List()
-		cobra.CheckErr(err)
+		resp, err := c.AppOp.List()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		if *resp.TotalCount > 0 {
+			cli.PrettyPrint(resp.Items)
+		}
 	},
 }
 

@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/url"
 	"os"
+	"runtime"
 	"strings"
 	"time"
 
@@ -26,6 +27,7 @@ type Session struct {
 	Scope        string `json:"scope" yaml:"scope" mapstructure:"scope"`
 	PhoneNumber  string `json:"phone_number" yaml:"phone_number" mapstructure:"phone_number"`
 	Username     string `json:"username" yaml:"username" mapstructure:"username"`
+	DeviceToken  string `json:"device_token" yaml:"device_token" mapstructure:"device_token"`
 }
 
 type Config struct {
@@ -41,16 +43,7 @@ func NewConfig() *Config {
 }
 
 func (session *Session) Valid() bool {
-	if session.AccessToken == "" {
-		return false
-	}
-	if session.ExpiresIn <= 0 {
-		return false
-	}
-	if session.CreatedAt <= 0 {
-		return false
-	}
-	return session.CreatedAt+session.ExpiresIn > time.Now().Unix()
+	return session.AccessToken != ""
 }
 
 type puupeeCli struct {
@@ -81,13 +74,73 @@ func NewpuupeeCli() *puupeeCli {
 		authorization := fmt.Sprintf("%s %s", cliCfg.Session.TokenType, cliCfg.Session.AccessToken)
 		api.GetConfig().AddDefaultHeader("Authorization", authorization)
 	}
-	return &puupeeCli{
+	cli := &puupeeCli{
 		api:       api,
 		session:   cliCfg.Session,
 		config:    cliCfg,
 		AppOp:     NewAppOp(api),
 		ReleaseOp: NewReleaseOp(api),
 	}
+	if err := cli.RefreshToken(); err != nil {
+		panic(err)
+	}
+	return cli
+}
+
+func (cli *puupeeCli) RefreshToken() error {
+	deviceToken, err := gonanoid.New()
+	if err != nil {
+		return err
+	}
+	v := url.Values{}
+	puupeeClientId := os.Getenv("PUUPEE_CLIENT_ID")
+	puupeeClientSecret := os.Getenv("PUUPEE_CLIENT_SECRET")
+	// hostname, err := os.Hostname()
+	// if err != nil {
+	// 	return err
+	// }
+	v.Set("grant_type", "refresh_token")
+	v.Set("scope", "Puupees openid offline_access address email phone profile roles")
+	v.Set("client_id", puupeeClientId)
+	v.Set("client_secret", puupeeClientSecret)
+	v.Set("refresh_token", cli.session.RefreshToken)
+	// v.Set("device_token", deviceToken)
+	// v.Set("device_name", hostname)
+	// v.Set("device_platform_type", runtime.GOOS)
+	// // TODO: 获取设备品牌名称
+	// v.Set("device_brand", "puupee-cli")
+	// // TODO: 获取系统版本号
+	// // https://gist.github.com/flxxyz/ae3ef071dc4ffb0c55daedc7f0740611
+	// // https://github.com/matishsiao/goInfo
+	// v.Set("device_system_version", "1.0.0")
+
+	loginUrl := fmt.Sprintf("%s://%s/connect/token", cli.api.GetConfig().Scheme, cli.api.GetConfig().Host)
+	rsp, err := cli.api.GetConfig().HTTPClient.PostForm(loginUrl, v)
+	if err != nil {
+		return err
+	}
+	bts, err := ioutil.ReadAll(rsp.Body)
+	if err != nil {
+		return err
+	}
+	fmt.Println(string(bts))
+	if rsp.StatusCode > 300 {
+		return fmt.Errorf("Refresh access_token failed")
+	}
+	session := &Session{}
+	err = json.Unmarshal(bts, &session)
+	if err != nil {
+		return err
+	}
+	cli.session.CreatedAt = time.Now().Unix()
+	cli.session.DeviceToken = deviceToken
+	cli.session.RefreshToken = session.RefreshToken
+	cli.session.AccessToken = session.AccessToken
+	cli.session.ExpiresIn = session.ExpiresIn
+	cli.session.TokenType = session.TokenType
+	cli.session.IdToken = session.IdToken
+	viper.Set("session", cli.session)
+	return viper.WriteConfig()
 }
 
 func (cli *puupeeCli) Login() error {
@@ -138,15 +191,17 @@ func (cli *puupeeCli) Login() error {
 		}
 	}
 
-	id, err := gonanoid.New()
+	deviceToken, err := gonanoid.New()
 	if err != nil {
 		return err
 	}
-	deviceToken := id
 	v := url.Values{}
 	puupeeClientId := os.Getenv("PUUPEE_CLIENT_ID")
 	puupeeClientSecret := os.Getenv("PUUPEE_CLIENT_SECRET")
-
+	hostname, err := os.Hostname()
+	if err != nil {
+		return err
+	}
 	v.Set("grant_type", "phone_sms_verify")
 	v.Set("scope", "Puupees openid offline_access address email phone profile roles")
 	v.Set("client_id", puupeeClientId)
@@ -156,9 +211,13 @@ func (cli *puupeeCli) Login() error {
 	v.Set("username", username)
 	v.Set("password", password)
 	v.Set("device_token", deviceToken)
-	v.Set("device_name", "puupee-cli")
-	v.Set("device_platform_type", "command-line")
+	v.Set("device_name", hostname)
+	v.Set("device_platform_type", runtime.GOOS)
+	// TODO: 获取设备品牌名称
 	v.Set("device_brand", "puupee-cli")
+	// TODO: 获取系统版本号
+	// https://gist.github.com/flxxyz/ae3ef071dc4ffb0c55daedc7f0740611
+	// https://github.com/matishsiao/goInfo
 	v.Set("device_system_version", "1.0.0")
 
 	loginUrl := fmt.Sprintf("%s://%s/connect/token", cli.api.GetConfig().Scheme, cli.api.GetConfig().Host)
@@ -183,6 +242,7 @@ func (cli *puupeeCli) Login() error {
 	session.Username = username
 	session.PhoneNumber = phoneNumber
 	session.CreatedAt = time.Now().Unix()
+	session.DeviceToken = deviceToken
 	viper.Set("session", session)
 	return viper.WriteConfig()
 }
