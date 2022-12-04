@@ -70,10 +70,7 @@ func NewpuupeeCli() *puupeeCli {
 	if cliCfg.Session == nil {
 		cliCfg.Session = &Session{}
 	}
-	if cliCfg.Session.Valid() {
-		authorization := fmt.Sprintf("%s %s", cliCfg.Session.TokenType, cliCfg.Session.AccessToken)
-		api.GetConfig().AddDefaultHeader("Authorization", authorization)
-	}
+
 	cli := &puupeeCli{
 		api:       api,
 		session:   cliCfg.Session,
@@ -82,7 +79,17 @@ func NewpuupeeCli() *puupeeCli {
 		ReleaseOp: NewReleaseOp(api),
 	}
 	if err := cli.RefreshToken(); err != nil {
-		panic(err)
+		cli.session.AccessToken = ""
+		fmt.Println("Cleaning invalid access token")
+		viper.Set("session", cli.session)
+		err = viper.WriteConfig()
+		if err != nil {
+			panic(err)
+		}
+	}
+	if cliCfg.Session.Valid() {
+		authorization := fmt.Sprintf("%s %s", cliCfg.Session.TokenType, cliCfg.Session.AccessToken)
+		cli.api.GetConfig().AddDefaultHeader("Authorization", authorization)
 	}
 	return cli
 }
@@ -123,7 +130,7 @@ func (cli *puupeeCli) RefreshToken() error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(string(bts))
+	// fmt.Println(string(bts))
 	if rsp.StatusCode > 300 {
 		return fmt.Errorf("Refresh access_token failed")
 	}
@@ -229,7 +236,7 @@ func (cli *puupeeCli) Login() error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(string(bts))
+	// fmt.Println(string(bts))
 	if rsp.StatusCode > 300 {
 		return fmt.Errorf("登录失败，请检查手机号码和短信验证码")
 	}
@@ -248,6 +255,8 @@ func (cli *puupeeCli) Login() error {
 }
 
 func (cli *puupeeCli) Logout() error {
-	viper.Set("session", nil)
+	cli.session.AccessToken = ""
+	cli.session.RefreshToken = ""
+	viper.Set("session", cli.session)
 	return viper.WriteConfig()
 }
