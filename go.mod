@@ -6,14 +6,16 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.6
 	github.com/bndr/gotabulate v1.1.2
 	github.com/matoous/go-nanoid/v2 v2.0.0
-	github.com/puupee/puupee-api-go v0.0.0-20221203173714-ac36b641306a
+	github.com/puupee/puupee-api-go v0.0.0-20221204113403-a905c1e07b62
 	github.com/spf13/cobra v1.5.0
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2
 )
 
 require (
+	github.com/clbanning/mxj v1.8.4 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
@@ -21,14 +23,16 @@ require (
 	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
+	github.com/mozillazg/go-httpheader v0.2.1 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.5 // indirect
 	github.com/spf13/afero v1.9.2 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/subosito/gotenv v1.4.1 // indirect
-	golang.org/x/net v0.0.0-20221014081412-f15817d10f9b // indirect
-	golang.org/x/oauth2 v0.0.0-20221014153046-6fdb5e3db783 // indirect
+	github.com/tencentyun/cos-go-sdk-v5 v0.7.40 // indirect
+	golang.org/x/net v0.2.0 // indirect
+	golang.org/x/oauth2 v0.2.0 // indirect
 	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/term v0.2.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
