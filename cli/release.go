@@ -139,6 +139,7 @@ func (op *ReleaseOp) Create(payload *CreateReleasePayload) error {
 		dto.SliceMd5 = &rc.SliceMD5
 		dto.Size = &rc.Size
 		dto.RapidCode = &rcStr
+		dto.Key = &key
 
 		creditResult, _, err := op.api.StorageObjectApi.
 			ApiAppStorageObjectFileOrCredentialsGet(context.Background()).

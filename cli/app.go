@@ -2,8 +2,6 @@ package cli
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 
 	"golang.org/x/xerrors"
 
@@ -41,14 +39,13 @@ func (op *AppOp) List() (*puupee.AppDtoPagedResultDto, error) {
 	return dto, nil
 }
 
-func (op *AppOp) Get(appName string) error {
-	appDto, _, err := op.api.AppApi.ApiAppAppByNameGet(context.Background()).
+func (op *AppOp) Get(appName string) (*puupee.AppDto, error) {
+	appDto, _, err := op.api.AppApi.
+		ApiAppAppByNameGet(context.Background()).
 		Name(appName).
 		Execute()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	bts, _ := json.MarshalIndent(appDto, "", "  ")
-	fmt.Println(string(bts))
-	return nil
+	return appDto, nil
 }

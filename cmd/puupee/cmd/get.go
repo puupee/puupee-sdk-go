@@ -13,8 +13,9 @@ var getCmd = &cobra.Command{
 	Use:   "get",
 	Short: "获取单个App信息",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := cli.NewpuupeeCli().AppOp.Get(cmd.Flag("name").Value.String())
+		appDto, err := cli.NewpuupeeCli().AppOp.Get(cmd.Flag("name").Value.String())
 		cobra.CheckErr(err)
+		cli.PrintObject(appDto)
 	},
 }
 
