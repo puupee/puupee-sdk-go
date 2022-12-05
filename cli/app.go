@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"golang.org/x/xerrors"
+
 	"github.com/puupee/puupee-api-go"
 )
 
@@ -25,7 +27,7 @@ func (op *AppOp) Create(dto puupee.CreateOrUpdateAppDto) error {
 	if err != nil {
 		return err
 	}
-	PrettyPrint(resp)
+	PrintObject(resp)
 	return nil
 }
 
@@ -34,7 +36,7 @@ func (op *AppOp) List() (*puupee.AppDtoPagedResultDto, error) {
 		MaxResultCount(100).
 		Execute()
 	if err != nil {
-		return nil, err
+		return nil, xerrors.Errorf("api request error: %w", err)
 	}
 	return dto, nil
 }

@@ -4,13 +4,14 @@ go 1.18
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.6
+	github.com/bndr/gotabulate v1.1.2
 	github.com/matoous/go-nanoid/v2 v2.0.0
 	github.com/puupee/puupee-api-go v0.0.0-20221203173714-ac36b641306a
 	github.com/spf13/cobra v1.5.0
+	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2
 )
 
 require (
-	github.com/bndr/gotabulate v1.1.2 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect

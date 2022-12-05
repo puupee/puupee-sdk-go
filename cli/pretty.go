@@ -17,10 +17,41 @@ func PrintObject(v interface{}) {
 	if err != nil {
 		panic(err)
 	}
-	PrettyPrint(m)
+	headers := []string{"name", "value"}
+	rows := make([][]interface{}, 0)
+	for key, value := range m {
+		rows = append(rows, []interface{}{key, value})
+	}
+	t := gotabulate.Create(rows)
+	t.SetHeaders(headers)
+	t.SetAlign("left")
+	fmt.Println(t.Render("grid"))
 }
 
-func PrettyPrint(v interface{}) {
-	t := gotabulate.Create(v)
+func PrintArray(v interface{}) {
+	bts, err := json.Marshal(&v)
+	if err != nil {
+		panic(err)
+	}
+	marray := make([]map[string]interface{}, 0)
+	err = json.Unmarshal(bts, &marray)
+	if err != nil {
+		panic(err)
+	}
+	headers := make([]string, 0)
+	rows := make([][]interface{}, 0)
+	for index, item := range marray {
+		row := make([]interface{}, 0)
+		for key, value := range item {
+			if index == 0 {
+				headers = append(headers, key)
+			}
+			row = append(row, value)
+		}
+		rows = append(rows, row)
+	}
+	t := gotabulate.Create(rows)
+	t.SetHeaders(headers)
+	t.SetAlign("left")
 	fmt.Println(t.Render("grid"))
 }

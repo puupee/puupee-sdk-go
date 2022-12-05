@@ -17,7 +17,7 @@ var configCmd = &cobra.Command{
 		config := cli.NewConfig()
 		err := viper.Unmarshal(config)
 		cobra.CheckErr(err)
-		cli.PrettyPrint(config)
+		cli.PrintObject(config)
 	},
 }
 

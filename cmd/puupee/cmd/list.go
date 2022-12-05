@@ -22,7 +22,7 @@ var listCmd = &cobra.Command{
 			return
 		}
 		if *resp.TotalCount > 0 {
-			cli.PrettyPrint(resp.Items)
+			cli.PrintArray(resp.Items)
 		}
 	},
 }

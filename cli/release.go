@@ -23,7 +23,7 @@ func (op *ReleaseOp) Create(dto puupee.CreateOrUpdateAppReleaseDto) error {
 	if err != nil {
 		return err
 	}
-	PrettyPrint(resp)
+	PrintObject(resp)
 	return nil
 }
 

@@ -15,6 +15,7 @@ var newCmd = &cobra.Command{
 	Short: "新建App",
 	Run: func(cmd *cobra.Command, args []string) {
 		dto := puupee.NewCreateOrUpdateAppDto()
+		dto.SetAppId(cmd.Flag("app-id").Value.String())
 		dto.SetName(cmd.Flag("name").Value.String())
 		dto.SetDisplayName(cmd.Flag("displayName").Value.String())
 		dto.SetFramework(cmd.Flag("framework").Value.String())
@@ -41,10 +42,11 @@ func init() {
 	// is called directly, e.g.:
 	// newCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
+	newCmd.Flags().StringP("app-id", "a", "", "Id of app")
 	newCmd.Flags().StringP("name", "n", "", "Name of app")
 	newCmd.Flags().StringP("displayName", "d", "", "Display name of app")
-	newCmd.Flags().StringP("framework", "f", "", "Framework of app")
-	newCmd.Flags().StringP("appType", "t", "", "AppType of app")
+	newCmd.Flags().StringP("framework", "f", "Flutter", "Framework of app")
+	newCmd.Flags().StringP("appType", "t", "Client", "AppType of app")
 	newCmd.Flags().StringP("description", "e", "", "Description of app")
 	newCmd.Flags().StringP("icon", "i", "", "Icon of app")
 	newCmd.Flags().StringP("git-repo", "g", "", "Git Repository of app")
