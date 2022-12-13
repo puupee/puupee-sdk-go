@@ -15,7 +15,6 @@ var newCmd = &cobra.Command{
 	Short: "新建App",
 	Run: func(cmd *cobra.Command, args []string) {
 		dto := puupee.NewCreateOrUpdateAppDto()
-		dto.SetAppId(cmd.Flag("app-id").Value.String())
 		dto.SetName(cmd.Flag("name").Value.String())
 		dto.SetDisplayName(cmd.Flag("displayName").Value.String())
 		dto.SetFramework(cmd.Flag("framework").Value.String())

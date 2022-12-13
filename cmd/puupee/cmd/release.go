@@ -13,8 +13,9 @@ var releaseCmd = &cobra.Command{
 	Use:   "release",
 	Short: "获取AppRelease列表",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := cli.NewpuupeeCli().ReleaseOp.List(cmd.Flag("name").Value.String())
+		result, err := cli.NewpuupeeCli().ReleaseOp.List(cmd.Flag("name").Value.String())
 		cobra.CheckErr(err)
+		cli.PrintArray(result.Items)
 	},
 }
 

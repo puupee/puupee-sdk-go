@@ -6,7 +6,6 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -14,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/puupee/puupee-api-go"
@@ -132,38 +132,49 @@ func (op *ReleaseOp) Create(payload *CreateReleasePayload) error {
 		Environment:   &payload.Environment,
 	}
 	if payload.Filepath != "" {
-		rc := NewRapidCodeFromFile(payload.Filepath)
-		key := rc.Key()
-		rcStr := rc.String()
-		dto.Md5 = &rc.MD5
-		dto.SliceMd5 = &rc.SliceMD5
-		dto.Size = &rc.Size
-		dto.RapidCode = &rcStr
+		fileMD5, err := FileMD5(payload.Filepath)
+		if err != nil {
+			panic(err)
+		}
+		sliceMD5, err := SliceMD5(payload.Filepath)
+		if err != nil {
+			panic(err)
+		}
+		info, err := os.Stat(payload.Filepath)
+		if err != nil {
+			panic(err)
+		}
+		filename := filepath.Base(payload.Filepath)
+		filename = strings.ReplaceAll(filename, "+", ".")
+		size := info.Size()
+		dto.Md5 = &fileMD5
+		dto.SliceMd5 = &sliceMD5
+		dto.Size = &size
+		key := fmt.Sprintf("apps/%s/%s/releases/%s/%s", *appInfo.Creator.UserName, *appInfo.Name, strings.ToLower(payload.Platform), filename)
 		dto.Key = &key
 
-		creditResult, _, err := op.api.StorageObjectApi.
-			ApiAppStorageObjectFileOrCredentialsGet(context.Background()).
+		creditResult, _, err := op.api.AppApi.
+			ApiAppAppUploadCredentialsGet(context.Background()).
 			Key(key).
-			RapidCode(rc.String()).
 			Execute()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error when calling `FileApi.ApiAppFilePreSignUrlPost``: %v\n", err)
 			return err
 		}
-		if creditResult.Credentials != nil {
+		if creditResult != nil {
 			// 存储桶名称，由bucketname-appid 组成，appid必须填入，可以在COS控制台查看存储桶名称。 https://console.cloud.tencent.com/cos5/bucket
 			// 替换为用户的 region，存储桶region可以在COS控制台“存储桶概览”查看 https://console.cloud.tencent.com/ ，关于地域的详情见 https://cloud.tencent.com/document/product/436/6224 。
-			u, _ := url.Parse(fmt.Sprintf("https://%s.cos.%s.myqcloud.com", *creditResult.Credentials.BucketName, *creditResult.Credentials.RegionId))
+			u, _ := url.Parse(fmt.Sprintf("https://%s.cos.%s.myqcloud.com", *creditResult.BucketName, *creditResult.RegionId))
 			b := &cos.BaseURL{BucketURL: u}
 			c := cos.NewClient(b, &http.Client{
 				Transport: &cos.AuthorizationTransport{
 					// 通过环境变量获取密钥
 					// 环境变量 COS_SECRETID 表示用户的 SecretId，登录访问管理控制台查看密钥，https://console.cloud.tencent.com/cam/capi
-					SecretID: creditResult.Credentials.GetAccessKeyId(),
+					SecretID: creditResult.GetAccessKeyId(),
 					// 环境变量 COS_SECRETKEY 表示用户的 SecretKey，登录访问管理控制台查看密钥，https://console.cloud.tencent.com/cam/capi
-					SecretKey:    creditResult.Credentials.GetAccessKeySecret(),
-					SessionToken: creditResult.Credentials.GetSecurityToken(),
-					Expire:       time.Duration(creditResult.Credentials.GetExpiredTime()) * time.Second,
+					SecretKey:    creditResult.GetAccessKeySecret(),
+					SessionToken: creditResult.GetSecurityToken(),
+					Expire:       time.Duration(creditResult.GetExpiredTime()) * time.Second,
 					// Debug 模式，把对应 请求头部、请求内容、响应头部、响应内容 输出到标准输出
 					Transport: &debug.DebugRequestTransport{
 						RequestHeader: true,
@@ -180,7 +191,7 @@ func (op *ReleaseOp) Create(payload *CreateReleasePayload) error {
 					Listener: &cos.DefaultProgressListener{},
 				},
 			}
-			uploadResult, err := c.Object.PutFromFile(context.Background(), rc.Key(), payload.Filepath, opt)
+			uploadResult, err := c.Object.PutFromFile(context.Background(), key, payload.Filepath, opt)
 			if err != nil {
 				return err
 			}
@@ -203,16 +214,14 @@ func (op *ReleaseOp) Create(payload *CreateReleasePayload) error {
 	return nil
 }
 
-func (op *ReleaseOp) List(appName string) error {
+func (op *ReleaseOp) List(appName string) (*puupee.AppReleaseDtoPagedResultDto, error) {
 	appDto, _, err := op.api.AppApi.ApiAppAppByNameGet(context.Background()).Name(appName).Execute()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	dto, _, err := op.api.AppReleaseApi.ApiAppAppReleaseGet(context.Background()).AppId(*appDto.Id).MaxResultCount(100).Execute()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	bts, _ := json.MarshalIndent(dto, "", "  ")
-	fmt.Println(string(bts))
-	return nil
+	return dto, nil
 }
