@@ -4,6 +4,8 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/puupee/puupee-sdk-go/cli"
 	"github.com/spf13/cobra"
 )
@@ -15,7 +17,11 @@ var releaseCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		result, err := cli.NewpuupeeCli().ReleaseOp.List(cmd.Flag("name").Value.String())
 		cobra.CheckErr(err)
-		cli.PrintArray(result.Items)
+		if len(result.Items) > 0 {
+			cli.PrintArray(result.Items)
+		} else {
+			fmt.Println("暂时没有版本发布")
+		}
 	},
 }
 

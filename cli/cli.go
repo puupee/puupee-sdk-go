@@ -31,12 +31,14 @@ type Session struct {
 }
 
 type Config struct {
-	Host    string   `json:"host" yaml:"host" mapstructure:"host"`
-	Session *Session `json:"session" yaml:"session" mapstructure:"session"`
+	Env     string   `json:"env,omitempty" yaml:"env" mapstructure:"env"`
+	Host    string   `json:"host,omitempty" yaml:"host" mapstructure:"host"`
+	Session *Session `json:"session,omitempty" yaml:"session" mapstructure:"session"`
 }
 
 func NewConfig() *Config {
 	return &Config{
+		Env:     "prod",
 		Host:    "api.puupee.com",
 		Session: &Session{},
 	}
@@ -62,6 +64,8 @@ func NewpuupeeCli() *puupeeCli {
 	puupeeCfg := puupee.NewConfiguration()
 	puupeeCfg.Scheme = "https"
 	puupeeCfg.Host = cliCfg.Host
+	puupeeCfg.DefaultHeader["X-Requested-With"] = "XMLHttpRequest"
+
 	api := puupee.NewAPIClient(puupeeCfg)
 
 	if err != nil {
@@ -132,7 +136,7 @@ func (cli *puupeeCli) RefreshToken() error {
 	}
 	// fmt.Println(string(bts))
 	if rsp.StatusCode > 300 {
-		return fmt.Errorf("Refresh access_token failed")
+		return fmt.Errorf("refresh access_token failed")
 	}
 	session := &Session{}
 	err = json.Unmarshal(bts, &session)
