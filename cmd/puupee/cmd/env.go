@@ -11,9 +11,9 @@ import (
 )
 
 const (
-	local = "https://localhost:44355"
-	dev   = "https://dev.api.puupee.com"
-	prod  = "https://api.puupee.com"
+	local = "localhost:44355"
+	dev   = "dev.api.puupee.com"
+	prod  = "api.puupee.com"
 )
 
 // envCmd represents the env command

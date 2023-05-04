@@ -37,13 +37,19 @@ func init() {
 	releaseNewPayload = &cli.CreateReleasePayload{}
 
 	releaseNewCmd.Flags().StringVar(&releaseNewPayload.AppName, "app-name", "", "App name")
-	releaseNewCmd.Flags().StringVar(&releaseNewPayload.Version, "version", "", "App id")
-	releaseNewCmd.Flags().StringVar(&releaseNewPayload.Notes, "notes", "", "App id")
-	releaseNewCmd.Flags().StringVar(&releaseNewPayload.Platform, "platform", "", "App id")
-	releaseNewCmd.Flags().StringVar(&releaseNewPayload.ProductType, "product-type", "", "App id")
-	releaseNewCmd.Flags().StringVar(&releaseNewPayload.Channel, "channel", "", "App id")
-	releaseNewCmd.Flags().StringVar(&releaseNewPayload.Environment, "env", "", "App id")
-	releaseNewCmd.Flags().BoolVar(&releaseNewPayload.IsEnabled, "enabled", true, "App id")
-	releaseNewCmd.Flags().BoolVar(&releaseNewPayload.IsForceUpdate, "force-update", false, "App id")
-	releaseNewCmd.Flags().StringVar(&releaseNewPayload.Filepath, "file", "", "App id")
+	releaseNewCmd.Flags().StringVar(&releaseNewPayload.Version, "version", "", "Release version")
+	releaseNewCmd.Flags().StringVar(&releaseNewPayload.Notes, "notes", "", "Release notes")
+	releaseNewCmd.Flags().StringVar(&releaseNewPayload.Platform, "platform", "", "Release platform")
+	releaseNewCmd.Flags().StringVar(&releaseNewPayload.ProductType, "product-type", "", "Release product type")
+	releaseNewCmd.Flags().StringVar(&releaseNewPayload.Channel, "channel", "", "Release channel")
+	releaseNewCmd.Flags().StringVar(&releaseNewPayload.Environment, "env", "dev", "Release environment")
+	releaseNewCmd.Flags().BoolVar(&releaseNewPayload.IsEnabled, "enabled", false, "Release enabled right now")
+	releaseNewCmd.Flags().BoolVar(&releaseNewPayload.IsForceUpdate, "force-update", false, "Release force update")
+	releaseNewCmd.Flags().StringVar(&releaseNewPayload.Filepath, "file", "", "Release product file path")
+
+	releaseNewCmd.MarkFlagRequired("app-name")
+	releaseNewCmd.MarkFlagRequired("version")
+	releaseNewCmd.MarkFlagRequired("platform")
+	releaseNewCmd.MarkFlagRequired("product-type")
+	releaseNewCmd.MarkFlagRequired("file")
 }
