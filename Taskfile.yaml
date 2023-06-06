@@ -14,6 +14,4 @@ tasks:
       - GOPROXY=direct go get -u github.com/puupee/puupee-api-go
   install:
     cmds:
-      - go install -ldflags="-X 'github.com/puupee/puupee-sdk-go/buildinfo.Version={{.GIT_LAST_TAG}}-{{.GIT_COMMIT}}' -X 'github.com/puupee/puupee-sdk-go/buildinfo.Host={{.HOST}}' -X 'github.com/puupee/puupee-sdk-go/buildinfo.BuildTime=$(date)'" ./cmd/puupee
-    vars:
-      HOST: "api.puupee.com"
+      - go install -ldflags="-X 'github.com/puupee/puupee-sdk-go.Version={{.GIT_LAST_TAG}}-{{.GIT_COMMIT}}' -X 'github.com/puupee/puupee-sdk-go.BuildTime=$(date "+%Y-%m-%d %H:%M:%S")'" ./cmd/puupee

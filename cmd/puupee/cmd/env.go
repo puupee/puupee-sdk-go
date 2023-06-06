@@ -26,11 +26,12 @@ var envCmd = &cobra.Command{
 			if currentEnv == "" {
 				currentEnv = "local"
 			}
-			fmt.Printf("Current env: %s\n\n", currentEnv)
-			fmt.Println("Env:")
-			fmt.Printf("local: %s\n", local)
-			fmt.Printf("dev  : %s\n", dev)
-			fmt.Printf("prod : %s\n", prod)
+			fmt.Printf("Current Env: %s\n", currentEnv)
+			fmt.Printf("Current Host: %s\n\n", viper.GetString("host"))
+			fmt.Println("Envs:")
+			fmt.Printf("  local: %s\n", local)
+			fmt.Printf("  dev  : %s\n", dev)
+			fmt.Printf("  prod : %s\n", prod)
 			return
 		}
 

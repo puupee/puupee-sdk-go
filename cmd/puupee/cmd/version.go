@@ -8,6 +8,7 @@ import (
 
 	puupeesdk "github.com/puupee/puupee-sdk-go"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // infoCmd represents the version command
@@ -16,8 +17,10 @@ var infoCmd = &cobra.Command{
 	Short: "命令行信息",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("Version: %s\n", puupeesdk.Version)
-		fmt.Printf("Host: %s\n", puupeesdk.Host)
 		fmt.Printf("BuildTime: %s\n", puupeesdk.BuildTime)
+
+		fmt.Printf("Env: %s\n", viper.GetString("env"))
+		fmt.Printf("Host: %s\n", viper.GetString("host"))
 	},
 }
 
