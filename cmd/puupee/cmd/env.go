@@ -38,16 +38,19 @@ var envCmd = &cobra.Command{
 		if env == "local" {
 			viper.Set("env", "local")
 			viper.Set("host", local)
+			viper.Set("apiKey", viper.GetString("apiKeys.local"))
 			fmt.Printf("Switched to local %s\n", local)
 		}
 		if env == "dev" {
 			viper.Set("env", "dev")
 			viper.Set("host", dev)
+			viper.Set("apiKey", viper.GetString("apiKeys.dev"))
 			fmt.Printf("Switched to dev %s\n", dev)
 		}
 		if env == "prod" {
 			viper.Set("env", "prod")
 			viper.Set("host", prod)
+			viper.Set("apiKey", viper.GetString("apiKeys.prod"))
 			fmt.Printf("Switched to prod %s\n", prod)
 		}
 		err := viper.WriteConfig()

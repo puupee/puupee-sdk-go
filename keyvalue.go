@@ -1,7 +1,6 @@
-package cli
+package puupeesdk
 
-type KeyValueOp struct {
-}
+type KeyValueOp struct{}
 
 func NewKeyValueOp() *KeyValueOp {
 	return &KeyValueOp{}

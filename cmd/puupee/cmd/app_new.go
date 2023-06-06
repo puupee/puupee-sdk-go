@@ -5,7 +5,7 @@ package cmd
 
 import (
 	"github.com/puupee/puupee-api-go"
-	"github.com/puupee/puupee-sdk-go/cli"
+	puupeesdk "github.com/puupee/puupee-sdk-go"
 	"github.com/spf13/cobra"
 )
 
@@ -23,7 +23,7 @@ var newCmd = &cobra.Command{
 		dto.SetIcon(cmd.Flag("icon").Value.String())
 		dto.SetGitRepository(cmd.Flag("git-repo").Value.String())
 		dto.SetGitRepository(cmd.Flag("git-repo-type").Value.String())
-		err := cli.NewpuupeeCli().AppOp.Create(*dto)
+		err := puupeesdk.NewSdk().App.Create(*dto)
 		cobra.CheckErr(err)
 	},
 }

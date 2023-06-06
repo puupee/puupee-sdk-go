@@ -4,7 +4,7 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"github.com/puupee/puupee-sdk-go/cli"
+	puupeesdk "github.com/puupee/puupee-sdk-go"
 	"github.com/spf13/cobra"
 )
 
@@ -13,9 +13,9 @@ var getCmd = &cobra.Command{
 	Use:   "get",
 	Short: "获取单个App信息",
 	Run: func(cmd *cobra.Command, args []string) {
-		appDto, err := cli.NewpuupeeCli().AppOp.Get(cmd.Flag("name").Value.String())
+		appDto, err := puupeesdk.NewSdk().App.Get(cmd.Flag("name").Value.String())
 		cobra.CheckErr(err)
-		cli.PrintObject(appDto)
+		puupeesdk.PrintObject(appDto)
 	},
 }
 

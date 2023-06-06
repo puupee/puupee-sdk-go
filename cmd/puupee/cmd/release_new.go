@@ -4,19 +4,19 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"github.com/puupee/puupee-sdk-go/cli"
+	puupeesdk "github.com/puupee/puupee-sdk-go"
 	"github.com/spf13/cobra"
 )
 
-var releaseNewPayload *cli.CreateReleasePayload
+var releaseNewPayload *puupeesdk.CreateReleasePayload
 
 // releaseNewCmd represents the releaseNew command
 var releaseNewCmd = &cobra.Command{
 	Use:   "new",
 	Short: "Create a new app release",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := cli.NewpuupeeCli().
-			ReleaseOp.
+		err := puupeesdk.NewSdk().
+			Release.
 			Create(releaseNewPayload)
 		cobra.CheckErr(err)
 	},
@@ -34,7 +34,7 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// releaseNewCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	releaseNewPayload = &cli.CreateReleasePayload{}
+	releaseNewPayload = &puupeesdk.CreateReleasePayload{}
 
 	releaseNewCmd.Flags().StringVar(&releaseNewPayload.AppName, "app-name", "", "App name")
 	releaseNewCmd.Flags().StringVar(&releaseNewPayload.Version, "version", "", "Release version")

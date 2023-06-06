@@ -6,7 +6,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/puupee/puupee-sdk-go/cli"
+	puupeesdk "github.com/puupee/puupee-sdk-go"
 	"github.com/spf13/cobra"
 )
 
@@ -15,14 +15,14 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "应用列表",
 	Run: func(cmd *cobra.Command, args []string) {
-		c := cli.NewpuupeeCli()
-		resp, err := c.AppOp.List()
+		c := puupeesdk.NewSdk()
+		resp, err := c.App.List()
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 		if *resp.TotalCount > 0 {
-			cli.PrintArray(resp.Items)
+			puupeesdk.PrintArray(resp.Items)
 		}
 	},
 }

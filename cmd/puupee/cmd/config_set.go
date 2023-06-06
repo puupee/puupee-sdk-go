@@ -1,6 +1,5 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
@@ -14,11 +13,13 @@ var setCmd = &cobra.Command{
 	Use:   "set",
 	Short: "设置",
 	Run: func(cmd *cobra.Command, args []string) {
-		key := args[0]
-		value := args[1]
-		viper.Set(key, value)
-		err := viper.WriteConfig()
-		cobra.CheckErr(err)
+		apiKey, err := cmd.Flags().GetString("api-key")
+		if err == nil {
+			viper.Set("apiKey", apiKey)
+			viper.Set("apiKeys."+viper.GetString("env"), apiKey)
+			err := viper.WriteConfig()
+			cobra.CheckErr(err)
+		}
 	},
 }
 
@@ -34,4 +35,5 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// setCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	setCmd.Flags().String("apiKey", "", "apiKey")
 }

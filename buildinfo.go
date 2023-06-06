@@ -1,4 +1,4 @@
-package buildinfo
+package puupeesdk
 
 var (
 	BuildTime string

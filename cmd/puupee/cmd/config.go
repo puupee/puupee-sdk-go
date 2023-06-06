@@ -4,9 +4,8 @@ Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"github.com/puupee/puupee-sdk-go/cli"
+	puupeesdk "github.com/puupee/puupee-sdk-go"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // configCmd represents the config command
@@ -14,10 +13,7 @@ var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "配置",
 	Run: func(cmd *cobra.Command, args []string) {
-		config := cli.NewConfig()
-		err := viper.Unmarshal(config)
-		cobra.CheckErr(err)
-		cli.PrintObject(config)
+		puupeesdk.PrintObject(cfg)
 	},
 }
 

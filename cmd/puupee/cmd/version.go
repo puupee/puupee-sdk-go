@@ -6,7 +6,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/puupee/puupee-sdk-go/buildinfo"
+	puupeesdk "github.com/puupee/puupee-sdk-go"
 	"github.com/spf13/cobra"
 )
 
@@ -15,9 +15,9 @@ var infoCmd = &cobra.Command{
 	Use:   "info",
 	Short: "命令行信息",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("Version: %s\n", buildinfo.Version)
-		fmt.Printf("Host: %s\n", buildinfo.Host)
-		fmt.Printf("BuildTime: %s\n", buildinfo.BuildTime)
+		fmt.Printf("Version: %s\n", puupeesdk.Version)
+		fmt.Printf("Host: %s\n", puupeesdk.Host)
+		fmt.Printf("BuildTime: %s\n", puupeesdk.BuildTime)
 	},
 }
 

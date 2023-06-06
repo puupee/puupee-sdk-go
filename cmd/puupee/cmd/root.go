@@ -7,9 +7,14 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/puupee/puupee-sdk-go/buildinfo"
+	puupeesdk "github.com/puupee/puupee-sdk-go"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+)
+
+var (
+	cfg     = puupeesdk.NewConfig()
+	cfgFile string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -30,8 +35,6 @@ func Execute() {
 	}
 }
 
-var cfgFile string
-
 func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
@@ -42,6 +45,9 @@ func init() {
 	home, err := os.UserHomeDir()
 	cobra.CheckErr(err)
 	viper.SetConfigFile(filepath.Join(home, ".puupee.yaml"))
+
+	err = viper.Unmarshal(&cfg)
+	cobra.CheckErr(err)
 
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
@@ -54,7 +60,12 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	rootCmd.Flags().String("host", buildinfo.Host, "Api host")
+	rootCmd.PersistentFlags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.PersistentFlags().StringVar(&cfg.Env, "env", "prod", "Api host")
+	rootCmd.PersistentFlags().StringVar(&cfg.Host, "host", "api.puupee.com", "Api host")
+	rootCmd.PersistentFlags().StringVar(&cfg.ApiKey, "api-key", "", "Api key")
+
+	viper.BindPFlag("env", rootCmd.Flags().Lookup("env"))
 	viper.BindPFlag("host", rootCmd.Flags().Lookup("host"))
+	viper.BindPFlag("api-key", rootCmd.Flags().Lookup("api-key"))
 }

@@ -1,7 +1,6 @@
-package cli
+package puupeesdk
 
-type ItemOp struct {
-}
+type ItemOp struct{}
 
 func NewItemOp() *ItemOp {
 	return &ItemOp{}

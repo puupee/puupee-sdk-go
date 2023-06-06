@@ -6,7 +6,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/puupee/puupee-sdk-go/cli"
+	puupeesdk "github.com/puupee/puupee-sdk-go"
 	"github.com/spf13/cobra"
 )
 
@@ -15,10 +15,10 @@ var releaseCmd = &cobra.Command{
 	Use:   "release",
 	Short: "获取AppRelease列表",
 	Run: func(cmd *cobra.Command, args []string) {
-		result, err := cli.NewpuupeeCli().ReleaseOp.List(cmd.Flag("name").Value.String())
+		result, err := puupeesdk.NewSdk().Release.List(cmd.Flag("name").Value.String())
 		cobra.CheckErr(err)
 		if len(result.Items) > 0 {
-			cli.PrintArray(result.Items)
+			puupeesdk.PrintArray(result.Items)
 		} else {
 			fmt.Println("暂时没有版本发布")
 		}

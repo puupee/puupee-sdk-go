@@ -1,4 +1,4 @@
-package cli
+package puupeesdk
 
 import "github.com/puupee/puupee-api-go"
 
