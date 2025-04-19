@@ -7,6 +7,8 @@ vars:
     sh: git rev-parse --short HEAD
   GIT_LAST_TAG:
     sh: git describe --abbrev=0 --tags
+  BUILD_TIME:
+    sh: date "+%Y-%m-%d %H:%M:%S"
 
 tasks:
   update-api:
@@ -14,4 +16,12 @@ tasks:
       - GOPROXY=direct go get -u github.com/puupee/puupee-api-go
   install:
     cmds:
-      - go install -ldflags="-X 'github.com/puupee/puupee-sdk-go.Version={{.GIT_LAST_TAG}}-{{.GIT_COMMIT}}' -X 'github.com/puupee/puupee-sdk-go.BuildTime=$(date "+%Y-%m-%d %H:%M:%S")'" ./cmd/puupee
+      - go install -ldflags="-X 'github.com/puupee/puupee-sdk-go.Version={{.GIT_LAST_TAG}}-{{.GIT_COMMIT}}' -X 'github.com/puupee/puupee-sdk-go.BuildTime={{.BUILD_TIME}}'" ./cmd/puupee
+  cross-build:
+    desc: 交叉编译 macOS、Windows 和 Linux 平台的二进制文件
+    cmds:
+      - mkdir -p build
+      - GOOS=darwin GOARCH=amd64 go build -ldflags="-X 'github.com/puupee/puupee-sdk-go.Version={{.GIT_LAST_TAG}}-{{.GIT_COMMIT}}' -X 'github.com/puupee/puupee-sdk-go.BuildTime={{.BUILD_TIME}}'" -o build/puupee-darwin-amd64 ./cmd/puupee
+      - GOOS=darwin GOARCH=arm64 go build -ldflags="-X 'github.com/puupee/puupee-sdk-go.Version={{.GIT_LAST_TAG}}-{{.GIT_COMMIT}}' -X 'github.com/puupee/puupee-sdk-go.BuildTime={{.BUILD_TIME}}'" -o build/puupee-darwin-arm64 ./cmd/puupee
+      - GOOS=windows GOARCH=amd64 go build -ldflags="-X 'github.com/puupee/puupee-sdk-go.Version={{.GIT_LAST_TAG}}-{{.GIT_COMMIT}}' -X 'github.com/puupee/puupee-sdk-go.BuildTime={{.BUILD_TIME}}'" -o build/puupee-windows-amd64.exe ./cmd/puupee
+      - GOOS=linux GOARCH=amd64 go build -ldflags="-X 'github.com/puupee/puupee-sdk-go.Version={{.GIT_LAST_TAG}}-{{.GIT_COMMIT}}' -X 'github.com/puupee/puupee-sdk-go.BuildTime={{.BUILD_TIME}}'" -o build/puupee-linux-amd64 ./cmd/puupee
