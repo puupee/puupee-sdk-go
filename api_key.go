@@ -17,7 +17,7 @@ func NewApiKeyOp(api *puupee.APIClient) *ApiKeyOp {
 }
 
 func (op *ApiKeyOp) Create(dto puupee.ApiKeyCreateDto) error {
-	resp, _, err := op.api.ApiKeysApi.ApiApiKeysPost(context.Background()).
+	resp, _, err := op.api.ApiKeysApi.CreateApiKeys(context.Background()).
 		Body(dto).
 		Execute()
 	if err != nil {

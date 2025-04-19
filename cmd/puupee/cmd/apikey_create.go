@@ -14,7 +14,7 @@ var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "创建ApiKey",
 	Run: func(cmd *cobra.Command, args []string) {
-		dto := puupee.NewApiKeyCreateDto(cmd.Flag("name").Value.String(), cmd.Flag("key").Value.String())
+		dto := puupee.NewApiKeyCreateDto(cmd.Flag("name").Value.String())
 		err := puupeesdk.NewSdk().ApiKey.Create(*dto)
 		cobra.CheckErr(err)
 	},

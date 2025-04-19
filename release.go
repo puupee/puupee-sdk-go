@@ -36,7 +36,7 @@ type CreateReleasePayload struct {
 	Version       string
 	Notes         string
 	Platform      string
-	ProductType   string
+	ArtifactType  string
 	Channel       string
 	Environment   string
 	IsEnabled     bool
@@ -114,17 +114,19 @@ func (rc *RapidCode) Key() string {
 }
 
 func (op *ReleaseOp) Create(payload *CreateReleasePayload) error {
-	appInfo, _, err := op.api.AppApi.ApiAppAppByNameGet(context.Background()).
+	appInfo, _, err := op.api.AppApi.GetByName(context.Background()).
 		Name(payload.AppName).
 		Execute()
 	if err != nil {
 		return err
 	}
+	platform := puupee.AppPlatform(payload.Platform)
+	artifactType := puupee.ArtifactType(payload.ArtifactType)
 	dto := puupee.CreateOrUpdateAppReleaseDto{
 		Version:       &payload.Version,
 		Notes:         &payload.Notes,
-		Platform:      &payload.Platform,
-		ProductType:   &payload.ProductType,
+		Platform:      &platform,
+		ArtifactType:  &artifactType,
 		IsForceUpdate: &payload.IsForceUpdate,
 		AppId:         appInfo.Id,
 		IsEnabled:     &payload.IsEnabled,
@@ -154,7 +156,7 @@ func (op *ReleaseOp) Create(payload *CreateReleasePayload) error {
 		dto.Key = &key
 
 		creditResult, _, err := op.api.AppApi.
-			ApiAppAppUploadCredentialsGet(context.Background()).
+			GetUploadCredentials(context.Background()).
 			Key(key).
 			Execute()
 		if err != nil {
@@ -204,7 +206,7 @@ func (op *ReleaseOp) Create(payload *CreateReleasePayload) error {
 	}
 
 	resp, _, err := op.api.AppReleaseApi.
-		ApiAppAppReleasePost(context.Background()).
+		CreateAppRelease(context.Background()).
 		Body(dto).
 		Execute()
 	if err != nil {
@@ -215,11 +217,11 @@ func (op *ReleaseOp) Create(payload *CreateReleasePayload) error {
 }
 
 func (op *ReleaseOp) List(appName string) (*puupee.AppReleaseDtoPagedResultDto, error) {
-	appDto, _, err := op.api.AppApi.ApiAppAppByNameGet(context.Background()).Name(appName).Execute()
+	appDto, _, err := op.api.AppApi.GetByName(context.Background()).Name(appName).Execute()
 	if err != nil {
 		return nil, err
 	}
-	dto, _, err := op.api.AppReleaseApi.ApiAppAppReleaseGet(context.Background()).AppId(*appDto.Id).MaxResultCount(100).Execute()
+	dto, _, err := op.api.AppReleaseApi.GetAppReleaseList(context.Background()).AppId(*appDto.Id).Execute()
 	if err != nil {
 		return nil, err
 	}

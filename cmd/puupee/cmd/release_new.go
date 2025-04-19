@@ -40,7 +40,7 @@ func init() {
 	releaseNewCmd.Flags().StringVar(&releaseNewPayload.Version, "version", "", "Release version")
 	releaseNewCmd.Flags().StringVar(&releaseNewPayload.Notes, "notes", "", "Release notes")
 	releaseNewCmd.Flags().StringVar(&releaseNewPayload.Platform, "platform", "", "Release platform")
-	releaseNewCmd.Flags().StringVar(&releaseNewPayload.ProductType, "product-type", "", "Release product type")
+	releaseNewCmd.Flags().StringVar(&releaseNewPayload.ArtifactType, "artifact-type", "", "Release artifact type")
 	releaseNewCmd.Flags().StringVar(&releaseNewPayload.Channel, "channel", "", "Release channel")
 	releaseNewCmd.Flags().StringVar(&releaseNewPayload.Environment, "env", "dev", "Release environment")
 	releaseNewCmd.Flags().BoolVar(&releaseNewPayload.IsEnabled, "enabled", false, "Release enabled right now")
