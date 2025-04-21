@@ -60,7 +60,7 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.PersistentFlags().BoolP("toggle", "t", false, "Help message for toggle")
+	// rootCmd.PersistentFlags().BoolP("toggle", "t", false, "Help message for toggle")
 	rootCmd.PersistentFlags().StringVar(&cfg.Env, "env", "prod", "Api host")
 	rootCmd.PersistentFlags().StringVar(&cfg.Host, "host", "api.puupee.com", "Api host")
 	rootCmd.PersistentFlags().StringVar(&cfg.ApiKey, "api-key", "", "Api key")
